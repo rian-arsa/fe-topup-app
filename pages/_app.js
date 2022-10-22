@@ -12,6 +12,7 @@ import "../styles/sidebar.css";
 import "../styles/overview.css";
 import "../styles/transactions.css";
 import "../styles/edit-profile.css";
+import "../styles/navbar-log-in.css";
 import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
