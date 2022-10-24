@@ -5,6 +5,7 @@ import { getGameCategories } from "../service/player";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 function SignUpPhoto() {
   const [categories, setCategories] = useState([]);
@@ -27,7 +28,7 @@ function SignUpPhoto() {
 
   useEffect(() => {
     getCategoryAPI();
-  }, []);
+  }, [getCategoryAPI]);
 
   useEffect(() => {
     const localData = localStorage.getItem("form-signup");
@@ -49,12 +50,15 @@ function SignUpPhoto() {
     data.append("username", form.name);
     data.append("phoneNumber", "0822121998219882");
 
-    const result = await signUp(data);
+    const response = await signUp(data);
 
-    if (result.error) {
-      return toast.error(result.message);
+    if (response.error) {
+      return toast.error(response.message);
     }
 
+    console.log(response);
+    const tokenBase64 = btoa(response.data.token);
+    Cookies.set("token", tokenBase64, { expires: 1 });
     router.push("/sign-up-success");
     localStorage.removeItem("form-signup");
   };

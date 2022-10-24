@@ -1,11 +1,20 @@
 import Image from "next/image";
 import cx from "classnames";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 
-function Auth(props) {
+function Auth() {
   const [show, setShow] = useState(true);
-  const { isLogin } = props;
+  const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    avatar: "",
+    id: "",
+  });
 
   const classTitle = cx({
     "dropdown-menus": true,
@@ -15,6 +24,37 @@ function Auth(props) {
     let temp = show ? false : true;
     setShow(temp);
   };
+
+  const handleLogin = () => {
+    const token = Cookies.get("token");
+    if (token) {
+      const jwt_token = atob(token);
+      const player = jwtDecode(jwt_token);
+      if (player.player.avatar) {
+        player.player.avatar = `${process.env.NEXT_PUBLIC_IMG}/${player.player.avatar}`;
+      }
+      setIsLogin(true);
+
+      setUser(player.player);
+    }
+  };
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    setIsLogin(false);
+    setUser({
+      name: "",
+      email: "",
+      password: "",
+      avatar: "",
+      id: "",
+    });
+  };
+
   if (isLogin) {
     return (
       <li className="nav-item my-auto dropdown d-flex">
@@ -22,8 +62,8 @@ function Auth(props) {
         <div onClick={() => showNav(show)}>
           <Link href="/#">
             <a className="ms-lg-40" role="button">
-              <Image
-                src="/img/avatar-1.png"
+              <img
+                src={user.avatar}
                 className="rounded-circle"
                 width="40"
                 height="40"
@@ -52,10 +92,8 @@ function Auth(props) {
                 </a>
               </Link>
             </li>
-            <li>
-              <Link href="/sign-in">
-                <a className="dropdown-item text-lg color-palette-2">Log Out</a>
-              </Link>
+            <li onClick={handleLogout} style={{ cursor: "pointer" }}>
+              <a className="dropdown-item text-lg color-palette-2">Log Out</a>
             </li>
           </ul>
         </div>
