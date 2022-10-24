@@ -2,14 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 
 function GameItem(props) {
-  const { title, category, thumbnail } = props;
+  const { title, category, thumbnail, id } = props;
+
+  const myLoader = ({ src }) => {
+    return `${src}`;
+  };
   return (
     <div className="featured-game-card position-relative">
-      <Link href="/detail">
+      <Link href={`/detail/${id}`}>
         <a>
           <div className="blur-sharp">
             <Image
-              src={`/img/${thumbnail}.png`}
+              loader={myLoader}
+              src={thumbnail}
               width={205}
               height={270}
               alt=""
