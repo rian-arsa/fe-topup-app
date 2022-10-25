@@ -1,9 +1,13 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const callAPI = async ({ url, method, data, token }) => {
+export const callAPI = async ({ url, method, data, token, serverToken }) => {
   let headers = {};
-  if (token) {
+  if (serverToken) {
+    headers = {
+      Authorization: `Bearer ${serverToken}`,
+    };
+  } else if (token) {
     const tokenCookies = Cookies.get("token");
     if (tokenCookies) {
       const jwtToken = atob(tokenCookies);

@@ -88,7 +88,7 @@ export const CheckoutDetail = () => {
       accountUser: verifyID,
     };
 
-    const response = await setCheckout(data);
+    await setCheckout(data);
     localStorage.removeItem("detailGame");
     localStorage.removeItem("payment");
     localStorage.removeItem("nominal");

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getOverview } from "../../../service/player";
+import { getOverview } from "../../../service/member";
 import Category from "./Category";
 import TableRow from "./TableRow";
 

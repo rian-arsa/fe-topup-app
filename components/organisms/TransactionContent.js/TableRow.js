@@ -1,20 +1,24 @@
 import cx from "classnames";
 import Link from "next/link";
+import { NumericFormat } from "react-number-format";
 
 export default function TableRow(props) {
-  const { image, title, category, item, price, status } = props;
+  const { image, title, category, item, price, status, itemName, id } = props;
   const statusClass = cx({
     "float-start icon-status": true,
-    pending: status === "Pending",
-    success: status === "Success",
-    failed: status === "Failed",
+    pending: status === "pending",
+    success: status === "success",
+    failed: status === "failed",
   });
+
+  const URL_IMG = process.env.NEXT_PUBLIC_IMG;
+
   return (
     <tr data-category="pending" className="align-middle">
       <th scope="row">
         <img
           className="float-start me-3 mb-lg-0 mb-3"
-          src={`/img/${image}.png`}
+          src={`${URL_IMG}/${image}`}
           width="80"
           height="60"
           alt=""
@@ -29,10 +33,20 @@ export default function TableRow(props) {
         </div>
       </th>
       <td>
-        <p className="fw-medium color-palette-1 m-0">{item} Gold</p>
+        <p className="fw-medium color-palette-1 m-0">
+          {item} {itemName}
+        </p>
       </td>
       <td>
-        <p className="fw-medium color-palette-1 m-0">Rp {price}</p>
+        <p className="fw-medium color-palette-1 m-0">
+          <NumericFormat
+            value={price}
+            thousandSeparator="."
+            decimalSeparator=","
+            displayType="text"
+            prefix="Rp "
+          />
+        </p>
       </td>
       <td>
         <div>
@@ -43,7 +57,7 @@ export default function TableRow(props) {
         </div>
       </td>
       <td>
-        <Link href={"/member/transaction/detail"}>
+        <Link href={`/member/transaction/${id}`}>
           <a className="btn btn-status rounded-pill text-sm">Details</a>
         </Link>
       </td>

@@ -41,13 +41,3 @@ export const setCheckout = async (data) => {
     token: true,
   });
 };
-
-export const getOverview = async () => {
-  const url = `${ROOT_API}/${API_VERSION}/player/dashboard`;
-
-  return callAPI({
-    url,
-    method: "GET",
-    token: true,
-  });
-};
