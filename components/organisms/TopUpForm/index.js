@@ -1,12 +1,50 @@
+import { useRouter } from "next/router";
 import React from "react";
 import NominalItem from "./NominalItem";
 import PaymentItem from "./PaymentItem";
 
 export const TopUpForm = (props) => {
   const { nominals, payments } = props;
+  const [verifyID, setVerifyID] = React.useState("");
+  const [bankAccount, setBankAccount] = React.useState("");
+  const [nominal, setNominal] = React.useState({});
+  const [payment, setPayment] = React.useState({});
+  const [bank, setBank] = React.useState({});
+
+  const router = useRouter();
+
+  const onHandleNominalChange = (nominal) => {
+    setNominal(nominal);
+  };
+
+  const onHandlePaymentChange = (payment, bank) => {
+    setPayment(payment);
+    setBank(bank);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (
+      nominal === {} ||
+      payment === {} ||
+      bank === {} ||
+      verifyID === "" ||
+      bankAccount === ""
+    ) {
+      alert("Please fill all the fields");
+      return console.log("not submit");
+    }
+    localStorage.setItem("verifyID", verifyID);
+    localStorage.setItem("bankAccount", bankAccount);
+    localStorage.setItem("nominal", JSON.stringify(nominal));
+    localStorage.setItem("payment", JSON.stringify(payment));
+    localStorage.setItem("bank", JSON.stringify(bank));
+
+    router.push("/checkout");
+  };
 
   return (
-    <form action="./checkout.html" method="POST">
+    <form>
       <div class="pt-md-50 pt-30">
         <div class="">
           <label
@@ -18,10 +56,10 @@ export const TopUpForm = (props) => {
           <input
             type="text"
             class="form-control rounded-pill text-lg"
-            id="ID"
-            name="ID"
             aria-describedby="verifyID"
             placeholder="Enter your ID"
+            value={verifyID}
+            onChange={(event) => setVerifyID(event.target.value)}
           />
         </div>
       </div>
@@ -32,6 +70,7 @@ export const TopUpForm = (props) => {
         <div class="row justify-content-between">
           {nominals.map((item) => (
             <NominalItem
+              onChange={() => onHandleNominalChange(item)}
               key={item._id}
               id={item._id}
               coinQuantity={item.coinQuantity}
@@ -52,6 +91,7 @@ export const TopUpForm = (props) => {
               return item.banks.map((bank) => {
                 return (
                   <PaymentItem
+                    onChange={() => onHandlePaymentChange(item, bank)}
                     key={bank._id}
                     type={item.type}
                     bankName={bank.bankName}
@@ -73,20 +113,20 @@ export const TopUpForm = (props) => {
         <input
           type="text"
           class="form-control rounded-pill text-lg"
-          id="bankAccount"
-          name="bankAccount"
           aria-describedby="bankAccount"
           placeholder="Enter your Bank Account Name"
+          value={bankAccount}
+          onChange={(event) => setBankAccount(event.target.value)}
         />
       </div>
       <div class="d-sm-block d-flex flex-column w-100">
-        <a
-          href="./checkout.html"
+        <button
+          onClick={handleSubmit}
           type="submit"
           class="btn btn-submit rounded-pill fw-medium text-white border-0 text-lg"
         >
           Continue
-        </a>
+        </button>
       </div>
     </form>
   );

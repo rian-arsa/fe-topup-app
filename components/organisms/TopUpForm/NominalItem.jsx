@@ -1,11 +1,12 @@
 import { NumericFormat } from "react-number-format";
 
 function NominalItem(props) {
-  const { id, coinQuantity, price, coinName } = props;
+  const { id, coinQuantity, price, coinName, onChange } = props;
   return (
     <label
       class="col-lg-4 col-sm-6 ps-md-15 pe-md-15 pt-md-15 pb-md-15 pt-10 pb-10"
       for={id}
+      onChange={onChange}
     >
       <input class="d-none" type="radio" id={id} name="topup" value={id} />
       <div class="detail-card">

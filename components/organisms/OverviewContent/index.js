@@ -1,9 +1,29 @@
 import Image from "next/image";
-import React from "react";
+import { useEffect, useState } from "react";
+import { getOverview } from "../../../service/player";
 import Category from "./Category";
 import TableRow from "./TableRow";
 
 export default function OverviewContent() {
+  const [history, setHistory] = useState([]);
+  const [count, setCount] = useState([]);
+
+  const getDataOverviewAPI = async () => {
+    const response = await getOverview();
+    const data = response.data;
+
+    if (data) {
+      setHistory(data.history);
+      setCount(data.count);
+    }
+
+    console.log(history);
+  };
+
+  useEffect(() => {
+    getDataOverviewAPI();
+  }, []);
+
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">
@@ -14,15 +34,17 @@ export default function OverviewContent() {
           </p>
           <div className="main-content">
             <div className="row">
-              <Category icon="icon-dekstop" nominal={18500000}>
-                Game <br /> Desktop
-              </Category>
-              <Category icon="icon-mobile" nominal={8455000}>
-                Game <br /> Mobile
-              </Category>
-              <Category icon="icon-categories" nominal={5000000}>
-                Other <br /> Categories
-              </Category>
+              {count.map((data) => {
+                return (
+                  <Category
+                    key={data._id}
+                    icon="icon-dekstop"
+                    nominal={data.value}
+                  >
+                    {data.name}
+                  </Category>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -43,38 +65,20 @@ export default function OverviewContent() {
                 </tr>
               </thead>
               <tbody>
-                <TableRow
-                  title="Mobile Legend"
-                  categori="Mobile"
-                  item={200}
-                  price={850000}
-                  status={"Pending"}
-                  image="overview-1"
-                />
-                <TableRow
-                  title="Call of Duty:Modern"
-                  categori="Dekstop"
-                  item={550}
-                  price={740000}
-                  status={"Success"}
-                  image="overview-2"
-                />
-                <TableRow
-                  title="Clash of Clans"
-                  categori="Mobile"
-                  item={100}
-                  price={120000}
-                  status={"Failed"}
-                  image="overview-3"
-                />
-                <TableRow
-                  title="The Royal Game"
-                  categori="Mobile"
-                  item={225}
-                  price={200000}
-                  status={"Pending"}
-                  image="overview-4"
-                />
+                {history.map((data) => {
+                  return (
+                    <TableRow
+                      key={data._id}
+                      title={data.historyVoucherTopup.gameName}
+                      categori={data.historyVoucherTopup.category}
+                      itemName={data.historyVoucherTopup.coinName}
+                      item={data.historyVoucherTopup.coinQuantity}
+                      price={data.value}
+                      status={data.status}
+                      image={data.historyVoucherTopup.thumbnail}
+                    />
+                  );
+                })}
               </tbody>
             </table>
           </div>

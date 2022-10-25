@@ -1,12 +1,13 @@
 import React from "react";
 
 export default function PaymentItem(props) {
-  const { type, bankName } = props;
+  const { type, bankName, onChange } = props;
 
   return (
     <label
       class="col-lg-4 col-sm-6 ps-md-15 pe-md-15 pt-md-15 pb-md-15 pt-10 pb-10"
       for={bankName._id}
+      onChange={onChange}
     >
       <input
         class="d-none"

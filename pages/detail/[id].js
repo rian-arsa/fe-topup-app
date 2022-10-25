@@ -22,8 +22,18 @@ function Detail() {
 
   const getDetailGameAPI = useCallback(async (id) => {
     const data = await getGameDetail(id);
-    console.log(data);
     setDetailGame(data.voucher[0]);
+    const detailGame = {
+      name: data.voucher[0].name,
+      thumbnail: data.voucher[0].thumbnail,
+      price: data.voucher[0].price,
+      category: {
+        name: data.voucher[0].category.name,
+        id: data.voucher[0].category._id,
+      },
+      id: data.voucher[0]._id,
+    };
+    localStorage.setItem("detailGame", JSON.stringify(detailGame));
     setNominals(data.voucher[0].nominals);
     setPayments(data.payments);
   }, []);
@@ -33,7 +43,7 @@ function Detail() {
       console.log("ready");
       getDetailGameAPI(query.id);
     }
-  }, [isReady]);
+  }, [isReady, getDetailGameAPI, query.id]);
 
   return (
     <>

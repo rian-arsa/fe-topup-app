@@ -1,13 +1,12 @@
 import jwtDecode from "jwt-decode";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckoutConfirmation } from "../components/organisms/CheckoutConfirmation";
 import { CheckoutDetail } from "../components/organisms/CheckoutDetail";
 import { CheckoutItem } from "../components/organisms/CheckoutItem";
 
 function Checkout(props) {
   const { user } = props;
-  console.log(user);
+
   return (
     <>
       <section className="checkout mx-auto pt-md-100 pb-md-145 pt-30 pb-30">
@@ -29,7 +28,6 @@ function Checkout(props) {
           <hr />
 
           <CheckoutDetail />
-          <CheckoutConfirmation />
         </div>
       </section>
     </>
