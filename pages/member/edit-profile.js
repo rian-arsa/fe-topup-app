@@ -1,8 +1,58 @@
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import Input from "../../components/atoms/Input";
 import Sidebar from "../../components/organisms/Sidebar";
+import { setUpdateProfil } from "../../service/member";
 
 function EditProfile() {
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    avatar: "",
+    username: "",
+  });
+  const [preview, setPreview] = useState(null);
+
+  const router = useRouter();
+
+  const handleLogin = () => {
+    const token = Cookies.get("token");
+    if (token) {
+      const jwt_token = atob(token);
+      const player = jwtDecode(jwt_token);
+      if (player.player.avatar) {
+        player.player.avatar = `${process.env.NEXT_PUBLIC_IMG}/${player.player.avatar}`;
+      }
+      player.player.name = player.player.username;
+
+      setUser(player.player);
+    }
+  };
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
+  const onHandelSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    data.append("username", user.username);
+    data.append("avatar", user.avatar);
+
+    const response = await setUpdateProfil(data);
+    if (response.error) {
+      alert(response.error);
+    } else {
+      console.log(response);
+      Cookies.remove("token");
+      router.push("/sign-in");
+    }
+  };
+
   return (
     <section className="edit-profile overflow-auto">
       <Sidebar active="settings" />
@@ -13,21 +63,23 @@ function EditProfile() {
             <form action="">
               <div className="photo d-flex">
                 <div className="position-relative me-20">
-                  <Image
-                    src="/img/avatar-1.png"
-                    width={90}
-                    height={90}
-                    className="avatar img-fluid"
-                    alt="avatar"
-                  />
-                  <div className="avatar-overlay position-absolute top-0 d-flex justify-content-center align-items-center">
+                  {preview ? (
                     <Image
-                      src="/icon/upload.svg"
-                      width={24}
-                      height={24}
-                      alt="upload"
+                      src={preview}
+                      width={90}
+                      height={90}
+                      alt="avatar"
+                      style={{ borderRadius: "100%" }}
                     />
-                  </div>
+                  ) : (
+                    <Image
+                      src={user.avatar}
+                      width={90}
+                      height={90}
+                      alt="avatar"
+                      style={{ borderRadius: "100%" }}
+                    />
+                  )}
                 </div>
                 <div className="image-upload">
                   <label for="avatar">
@@ -44,16 +96,27 @@ function EditProfile() {
                     type="file"
                     name="avatar"
                     accept="image/png, image/jpeg"
+                    onChange={(e) => {
+                      setPreview(URL.createObjectURL(e.target.files[0]));
+                      console.log(e.target.files[0]);
+                      return setUser({
+                        ...user,
+                        avatar: e.target.files[0],
+                      });
+                    }}
                   />
                 </div>
               </div>
               <div className="pt-30">
                 <Input
                   label="Full Name"
-                  id="name"
-                  name="name"
                   placeholder="Enter your name"
                   type="text"
+                  value={user.username}
+                  onChange={(e) => {
+                    setUser({ ...user, username: e.target.value });
+                    console.log(e.target.value);
+                  }}
                 />
               </div>
               <div className="pt-30">
@@ -63,9 +126,11 @@ function EditProfile() {
                   name="email"
                   type="email"
                   placeholder="Enter your email address"
+                  disabled
+                  value={user.email}
                 />
               </div>
-              <div className="pt-30">
+              {/* <div className="pt-30">
                 <Input
                   label="Phone"
                   id="phone"
@@ -73,12 +138,12 @@ function EditProfile() {
                   type="tel"
                   placeholder="Enter your phone"
                 />
-              </div>
+              </div> */}
               <div className="button-group d-flex flex-column pt-50">
                 <button
-                  type="submit"
+                  onClick={onHandelSubmit}
+                  type="button"
                   className="btn btn-save fw-medium text-lg text-white rounded-pill"
-                  role="button"
                 >
                   Save My Profile
                 </button>

@@ -37,3 +37,14 @@ export const getTransactionDetail = async (id, token) => {
     serverToken: token,
   });
 };
+
+export const setUpdateProfil = async (data) => {
+  const url = `${ROOT_API}/${API_VERSION}/player/profile`;
+
+  return callAPI({
+    url,
+    method: "PUT",
+    data,
+    token: true,
+  });
+};

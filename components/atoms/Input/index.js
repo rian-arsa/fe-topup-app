@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Input(props) {
-  const { label, placeholder, type, name, id, value, onChange } = props;
+  const { label, ...nativeProps } = props;
   return (
     <>
       <label
@@ -10,16 +10,7 @@ export default function Input(props) {
       >
         {label}
       </label>
-      <input
-        type={type}
-        className="form-control rounded-pill text-lg"
-        id={id}
-        name={name}
-        aria-describedby="name"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
+      <input className="form-control rounded-pill text-lg" {...nativeProps} />
     </>
   );
 }
